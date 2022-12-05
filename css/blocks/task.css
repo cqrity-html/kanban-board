@@ -11,7 +11,7 @@
   border-left: 6px solid var(--light-gray);
   border-radius: 8px;
   background-color: #ffffff;
-
+  cursor: move;
   transition: var(--animation);
 }
 
@@ -44,7 +44,7 @@
   bottom: 0;
   left: -6px;
   right: 0;
-  content: "";
+  content: '';
   border: 0 solid var(--task-active-border-color);
   border-radius: 8px;
   transition: var(--animation);
@@ -71,7 +71,7 @@
 .task--active .task__edit,
 .task--active:hover .task__edit {
   opacity: 1;
-  background-image: url("../../img/edit-active.svg");
+  background-image: url('../../img/edit-active.svg');
 }
 
 .task--dragged {
@@ -113,7 +113,7 @@
   background-color: transparent;
   cursor: pointer;
   transition: var(--animation);
-  background-image: url("../../img/edit.svg");
+  background-image: url('../../img/edit.svg');
   opacity: 0;
 }
 
@@ -157,4 +157,8 @@
 
 .task--active .task__input {
   display: block;
+}
+
+.task:not(.task--empty) {
+  cursor: move;
 }
