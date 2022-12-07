@@ -81,20 +81,11 @@ taskboardList.addEventListener("dragend", (evt) => {
     evt.target.classList.remove("task--dragged");
 });
 
-const showEmptyList = function (activeList, activeTasks) {
-    const emptyField = activeList.querySelector(".task--empty");
-    if (activeTasks.length === 0) {
-        emptyField.style.display = "block";
-    } else {
-        emptyField.style.display = "none";
-    }
-};
-
-const refreshTaskClasses = function (activeElement) {
-    activeElement.classList.remove(...activeElement.classList);
-    activeElement.classList.add('taskboard__item');
-    activeElement.classList.add('task');
-}
+// const refreshTaskClasses = function (element) {
+//     element.classList.remove(...element.classList);
+//     element.classList.add('taskboard__item');
+//     element.classList.add('task');
+// }
 
 taskboardList.addEventListener(`dragover`, (evt) => {
     evt.preventDefault();
@@ -111,29 +102,36 @@ taskboardList.addEventListener(`dragover`, (evt) => {
         currentElement === activeElement.nextElementSibling
             ? currentElement.nextElementSibling
             : currentElement;
-    console.log(currentElement.querySelector(`p`));
-    console.log(nextElement.querySelector(`p`));
-
+    // console.log(currentElement.querySelector(`p`));
+    // console.log(nextElement.querySelector(`p`));
+    // console.log(activeList);
     currentList
         .querySelector(".taskboard__list")
         .insertBefore(activeElement, nextElement);
 
-    if (currentList.closest(".taskboard__group").classList.contains('taskboard__group--backlog')) {
-        refreshTaskClasses(nextElement);
+    // if (currentList.classList.contains('taskboard__group--backlog')) {
+    //     refreshTaskClasses(currentElement);
+    //     refreshTaskClasses(activeElement);
+    // }
+    // if (currentList.classList.contains('taskboard__group--processing')) {
+    //     refreshTaskClasses(activeElement);
+    //     activeElement.classList.add('task--processing');
+    // }
+    // if (currentList.classList.contains('taskboard__group--done')) {
+    //     refreshTaskClasses(activeElement);
+    //     activeElement.classList.add('task--done');
+    // }
+    // if (currentList.classList.contains('taskboard__group--basket')) {
+    //     refreshTaskClasses(activeElement);
+    //     activeElement.classList.add('task--basket');
+    // }
+
+    const emptyField = activeList.querySelector(".task--empty");
+    if (activeTasks.length === 0) {
+        emptyField.style.display = "block";
+    } else {
+        emptyField.style.display = "none";
     }
-    if (currentList.closest(".taskboard__group").classList.contains('taskboard__group--processing')) {
-        refreshTaskClasses(activeElement);
-        activeElement.classList.add('task--processing');
-    }
-    if (currentList.closest(".taskboard__group").classList.contains('taskboard__group--done')) {
-        refreshTaskClasses(activeElement);
-        activeElement.classList.add('task--done');
-    }
-    if (currentList.closest(".taskboard__group").classList.contains('taskboard__group--basket')) {
-        refreshTaskClasses(activeElement);
-        activeElement.classList.add('task--basket');
-    }
-    if (activeList !== backlogTaskboard) showEmptyList(activeList, activeTasks);
 });
 
 buttonClear.addEventListener('click', () => {
