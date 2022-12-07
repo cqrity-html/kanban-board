@@ -70,6 +70,7 @@ addTaskForm.addEventListener("submit", (evt) => {
     );
     addTaskForm.reset();
     initTaskList(backlogTasks);
+    if (basketTasks.length === 0) basketTaskboard.querySelector(".task--empty-trash").style.display = "block";
 });
 
 // Drag and Drop
@@ -81,11 +82,11 @@ taskboardList.addEventListener("dragend", (evt) => {
     evt.target.classList.remove("task--dragged");
 });
 
-// const refreshTaskClasses = function (element) {
-//     element.classList.remove(...element.classList);
-//     element.classList.add('taskboard__item');
-//     element.classList.add('task');
-// }
+const refreshTaskClasses = function (element) {
+    element.classList.remove(...element.classList);
+    element.classList.add('taskboard__item');
+    element.classList.add('task');
+}
 
 taskboardList.addEventListener(`dragover`, (evt) => {
     evt.preventDefault();
@@ -102,36 +103,42 @@ taskboardList.addEventListener(`dragover`, (evt) => {
         currentElement === activeElement.nextElementSibling
             ? currentElement.nextElementSibling
             : currentElement;
-    // console.log(currentElement.querySelector(`p`));
-    // console.log(nextElement.querySelector(`p`));
-    // console.log(activeList);
     currentList
         .querySelector(".taskboard__list")
         .insertBefore(activeElement, nextElement);
 
-    // if (currentList.classList.contains('taskboard__group--backlog')) {
-    //     refreshTaskClasses(currentElement);
-    //     refreshTaskClasses(activeElement);
-    // }
-    // if (currentList.classList.contains('taskboard__group--processing')) {
-    //     refreshTaskClasses(activeElement);
-    //     activeElement.classList.add('task--processing');
-    // }
-    // if (currentList.classList.contains('taskboard__group--done')) {
-    //     refreshTaskClasses(activeElement);
-    //     activeElement.classList.add('task--done');
-    // }
-    // if (currentList.classList.contains('taskboard__group--basket')) {
-    //     refreshTaskClasses(activeElement);
-    //     activeElement.classList.add('task--basket');
-    // }
+    taskboardList.addEventListener(`dragend`, (evt) => {
+        evt.preventDefault();
+        const emptyField = activeList.querySelector(".task--empty");
+        if (activeTasks.length === 0) {
+            emptyField.style.display = "block";
+        } else {
+            emptyField.style.display = "none";
+        }
 
-    const emptyField = activeList.querySelector(".task--empty");
-    if (activeTasks.length === 0) {
-        emptyField.style.display = "block";
-    } else {
-        emptyField.style.display = "none";
-    }
+        if (currentList.classList.contains('taskboard__group--backlog')) {
+            refreshTaskClasses(nextElement);
+            refreshTaskClasses(activeElement);
+        }
+        if (currentList.classList.contains('taskboard__group--processing')) {
+            refreshTaskClasses(nextElement);
+            refreshTaskClasses(activeElement);
+            activeElement.classList.add('task--processing');
+            nextElement.classList.add('task--processing');
+        }
+        if (currentList.classList.contains('taskboard__group--done')) {
+            refreshTaskClasses(nextElement);
+            refreshTaskClasses(activeElement);
+            activeElement.classList.add('task--done');
+            nextElement.classList.add('task--done');
+        }
+        if (currentList.classList.contains('taskboard__group--basket')) {
+            refreshTaskClasses(nextElement);
+            refreshTaskClasses(activeElement);
+            activeElement.classList.add('task--basket');
+            nextElement.classList.add('task--basket');
+        }
+    });
 });
 
 buttonClear.addEventListener('click', () => {
