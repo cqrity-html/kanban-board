@@ -1,58 +1,55 @@
-'use strict';
+"use strict";
 
+const tasks = document.getElementsByClassName("task");
 const taskboardList = document.querySelector(".taskboard");
+const taskLists = document.querySelectorAll(".taskboard__group");
 const backlogTaskboard = document.querySelector(".taskboard__group--backlog");
-const backlogTasks = backlogTaskboard.getElementsByClassName("task");
-const processingTaskboard = document.querySelector(".taskboard__group--processing");
-const processingTasks = processingTaskboard.getElementsByClassName("task");
-const doneTaskboard = document.querySelector(".taskboard__group--done");
-const doneTasks = doneTaskboard.getElementsByClassName("task");
 const basketTaskboard = document.querySelector(".taskboard__group--basket");
 const basketTasks = basketTaskboard.getElementsByClassName("task");
-const basketList = basketTaskboard.querySelector(".taskboard__list--trash");
+
 const addTaskInput = document.querySelector("#add-task");
 const addTaskForm = document.querySelector(".add-task__form");
 const emptyTasks = document.querySelectorAll(".task--empty");
 const buttonClear = document.querySelector(".button--clear");
 
+emptyTasks.forEach((task) => (task.style.display = "none"));
+
 const initTaskList = function (tasksList) {
     for (let task of tasksList) {
-        task.draggable = true;
-        const taskInput = task.querySelector(".task__input");
-        const taskText = task.querySelector(".task__view");
-        const taskEditButton = task.querySelector(".task__edit");
-        const isEnterKey = function (evt) {
-            if (evt.key === "Enter") {
-                taskText.textContent = taskInput.value;
-                task.classList.remove("task--active");
-                if (taskInput.value === "") {
-                    taskInput.setCustomValidity("Введите название задачи!");
-                    task.classList.add("task--active");
-                    taskInput.reportValidity();
-                } else {
+        if (!task.classList.contains("task--empty")) {
+            task.draggable = true;
+            const taskInput = task.querySelector(".task__input");
+            const taskText = task.querySelector(".task__view");
+            const taskEditButton = task.querySelector(".task__edit");
+            const isEnterKey = function (evt) {
+                if (evt.key === "Enter") {
                     taskText.textContent = taskInput.value;
                     task.classList.remove("task--active");
+                    if (taskInput.value === "") {
+                        taskInput.setCustomValidity("Введите название задачи!");
+                        task.classList.add("task--active");
+                        taskInput.reportValidity();
+                    } else {
+                        taskText.textContent = taskInput.value;
+                        task.classList.remove("task--active");
+                    }
                 }
-            }
-        };
-        const setActiveTask = function () {
-            for (let task of tasksList) {
-                task.classList.remove("task--active");
-            }
-            window.setTimeout(() => taskInput.focus(), 0);
-            task.classList.toggle("task--active");
-        };
-        taskEditButton.addEventListener("click", setActiveTask);
-        taskInput.addEventListener("keydown", isEnterKey);
-    }
+            };
+            const setActiveTask = function () {
+                for (let task of tasksList) {
+                    task.classList.remove("task--active");
+                }
+                window.setTimeout(() => taskInput.focus(), 0);
+                task.classList.toggle("task--active");
+            };
 
-    emptyTasks.forEach((task) => (task.style.display = "none"));
+            taskEditButton.addEventListener("click", setActiveTask);
+            taskInput.addEventListener("keydown", isEnterKey);
+        }
+    }
 };
 
-initTaskList(backlogTasks);
-initTaskList(processingTasks);
-initTaskList(doneTasks);
-initTaskList(basketTasks);
+initTaskList(tasks);
 
 addTaskForm.addEventListener("submit", (evt) => {
     evt.preventDefault();
@@ -69,8 +66,9 @@ addTaskForm.addEventListener("submit", (evt) => {
     `
     );
     addTaskForm.reset();
-    initTaskList(backlogTasks);
-    if (basketTasks.length === 0) basketTaskboard.querySelector(".task--empty-trash").style.display = "block";
+    initTaskList(tasks);
+    if (basketTasks.length === 0)
+        basketTaskboard.querySelector(".task--empty-trash").style.display = "block";
 });
 
 // Drag and Drop
@@ -81,12 +79,6 @@ taskboardList.addEventListener("dragstart", (evt) => {
 taskboardList.addEventListener("dragend", (evt) => {
     evt.target.classList.remove("task--dragged");
 });
-
-const refreshTaskClasses = function (element) {
-    element.classList.remove(...element.classList);
-    element.classList.add('taskboard__item');
-    element.classList.add('task');
-}
 
 taskboardList.addEventListener(`dragover`, (evt) => {
     evt.preventDefault();
@@ -99,51 +91,52 @@ taskboardList.addEventListener(`dragover`, (evt) => {
         activeElement !== currentElement &&
         currentElement.classList.contains(`task`);
     if (!isMoveable) return;
+
     const nextElement =
         currentElement === activeElement.nextElementSibling
             ? currentElement.nextElementSibling
             : currentElement;
+
     currentList
         .querySelector(".taskboard__list")
         .insertBefore(activeElement, nextElement);
 
     taskboardList.addEventListener(`dragend`, (evt) => {
         evt.preventDefault();
+
         const emptyField = activeList.querySelector(".task--empty");
-        if (activeTasks.length === 0) {
+        if (activeTasks.length === 1) {
             emptyField.style.display = "block";
         } else {
             emptyField.style.display = "none";
         }
 
-        if (currentList.classList.contains('taskboard__group--backlog')) {
-            refreshTaskClasses(nextElement);
-            refreshTaskClasses(activeElement);
+        if (activeList === basketTaskboard && basketTasks.length === 1) {
+            buttonClear.disabled = true;
         }
-        if (currentList.classList.contains('taskboard__group--processing')) {
-            refreshTaskClasses(nextElement);
-            refreshTaskClasses(activeElement);
-            activeElement.classList.add('task--processing');
-            nextElement.classList.add('task--processing');
+
+        if (currentList === basketTaskboard && basketTasks.length > 1) {
+            buttonClear.disabled = false;
+            currentList.querySelector(".task--empty").style.display = "none";
         }
-        if (currentList.classList.contains('taskboard__group--done')) {
-            refreshTaskClasses(nextElement);
-            refreshTaskClasses(activeElement);
-            activeElement.classList.add('task--done');
-            nextElement.classList.add('task--done');
-        }
-        if (currentList.classList.contains('taskboard__group--basket')) {
-            refreshTaskClasses(nextElement);
-            refreshTaskClasses(activeElement);
-            activeElement.classList.add('task--basket');
-            nextElement.classList.add('task--basket');
-        }
+
+        taskLists.forEach((list) => {
+            if (currentList.classList.contains(`taskboard__group--${list.id}`)) {
+                activeElement.classList.remove(...activeElement.classList);
+                activeElement.classList.add("taskboard__item");
+                activeElement.classList.add("task");
+                activeElement.classList.add(`task--${list.id}`);
+            }
+        });
     });
 });
 
-buttonClear.addEventListener('click', () => {
-    basketList.innerHTML = '';
+buttonClear.addEventListener("click", () => {
+    document.querySelector('.taskboard__list--trash').innerHTML = '';
+    document.querySelector('.taskboard__list--trash').insertAdjacentHTML('afterbegin',
+        `<div class="taskboard__item task task--empty task--empty-trash">
+        <p>Корзина пуста</p>
+    </div>`);
+    buttonClear.disabled = true;
     basketTaskboard.querySelector(".task--empty-trash").style.display = "block";
-    buttonClear.disabled = 'true';
-}
-);
+});

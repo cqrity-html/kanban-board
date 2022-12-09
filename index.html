@@ -52,10 +52,10 @@
         </section>
         <section class="taskboard">
           <h2 class="visually-hidden">Ваши задачи:</h2>
-          <article class="taskboard__group taskboard__group--backlog">
+          <article class="taskboard__group taskboard__group--backlog" id="backlog">
             <h3 class="taskboard__group-heading taskboard__group-heading--backlog">Бэклог</h3>
             <div class="taskboard__list">
-              <div class="taskboard__item task--empty">
+              <div class="taskboard__item task task--empty" draggable="true">
                 <p>Перетащите карточку или добавьте новую задачу</p>
               </div>
               <div class="taskboard__item task">
@@ -81,12 +81,12 @@
               </div>
             </div>
           </article>
-          <article class="taskboard__group taskboard__group--processing">
+          <article class="taskboard__group taskboard__group--processing" id="processing">
             <h3 class="taskboard__group-heading taskboard__group-heading--processing">
               В процессе
             </h3>
             <div class="taskboard__list taskboard__list--sorted">
-              <div class="taskboard__item task--empty">
+              <div class="taskboard__item task task--empty">
                 <p>Перетащите карточку</p>
               </div>
               <div class="taskboard__item task task--processing">
@@ -104,10 +104,10 @@
                 <button class="task__edit" type="button" aria-label="Изменить"></button>
               </div>
           </article>
-          <article class="taskboard__group taskboard__group--done">
+          <article class="taskboard__group taskboard__group--done" id="done">
             <h3 class="taskboard__group-heading taskboard__group-heading--done">Готово</h3>
             <div class="taskboard__list taskboard__list--sorted">
-              <div class="taskboard__item task--empty">
+              <div class="taskboard__item task task--empty">
                 <p>Перетащите карточку</p>
               </div>
               <div class="taskboard__item task task--done">
@@ -126,9 +126,12 @@
               </div>
             </div>
           </article>
-          <article class="taskboard__group taskboard__group--basket">
+          <article class="taskboard__group taskboard__group--basket" id="basket">
             <h3 class="taskboard__group-heading taskboard__group-heading--basket">Корзина</h3>
             <div class="taskboard__list taskboard__list--trash">
+              <div class="taskboard__item task task--empty task--empty-trash">
+                <p>Корзина пуста</p>
+              </div>
               <div class="taskboard__item task task--basket">
                 <div class="task__body">
                   <p class="task__view">Сходить погулять</p>
@@ -143,9 +146,6 @@
                 </div>
                 <button class="task__edit" type="button" aria-label="Изменить"></button>
               </div>
-            </div>
-            <div class="task--empty task--empty-trash">
-              <p>Корзина пуста</p>
             </div>
             <button class="taskboard__button button button--clear" type="button">
               <svg
